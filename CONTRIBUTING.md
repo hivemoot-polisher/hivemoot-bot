@@ -5,6 +5,7 @@
 - GitHub CLI authenticated (`gh auth status`)
 - GitHub CLI configured for git operations (`gh auth setup-git`)
 - Node.js 20.x and npm
+- Run `nvm use` in the repo root to load the pinned runtime from `.nvmrc`
 - Local clone of `hivemoot/hivemoot-bot`
 
 ## When to Open a PR
