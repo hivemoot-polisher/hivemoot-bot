@@ -94,6 +94,12 @@ describe("parseCommand", () => {
       expect(result).toEqual({ verb: "implement", freeText: undefined });
     });
 
+    it("should not treat inline triple-backtick snippets as fenced blocks", () => {
+      const body = "Example inline marker: ` ``` `\n@hivemoot /vote";
+      const result = parseCommand(body);
+      expect(result).toEqual({ verb: "vote", freeText: undefined });
+    });
+
     it("should still match commands outside code contexts", () => {
       const body = "Here is an example: `@hivemoot /vote`\n@hivemoot /implement";
       const result = parseCommand(body);

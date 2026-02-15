@@ -50,7 +50,21 @@ const COMMAND_PATTERN = new RegExp(
  */
 function stripNonCommandContent(body: string): string {
   // Remove fenced code blocks first, including unclosed fences through EOF.
-  let cleaned = body.replace(/```[\s\S]*?(?:```|$)/g, "");
+  // A fence only starts/ends when ``` appears at the beginning of a line.
+  const withoutFences: string[] = [];
+  let inFence = false;
+  for (const line of body.split("\n")) {
+    const isFenceLine = line.trimStart().startsWith("```");
+    if (isFenceLine) {
+      inFence = !inFence;
+      continue;
+    }
+    if (!inFence) {
+      withoutFences.push(line);
+    }
+  }
+
+  let cleaned = withoutFences.join("\n");
 
   // Remove inline code spans that contain mention patterns
   cleaned = cleaned.replace(/`[^`]*@hivemoot[^`]*`/gi, "");
