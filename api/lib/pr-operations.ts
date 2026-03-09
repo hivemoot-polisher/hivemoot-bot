@@ -645,13 +645,21 @@ export class PROperations {
   ): Promise<{
     state: string;
     totalCount: number;
+    pendingContexts: string[];
   }> {
     const { data } = await this.client.rest.repos.getCombinedStatusForRef({
       owner,
       repo,
       ref,
     });
-    return { state: data.state, totalCount: data.total_count };
+    return {
+      state: data.state,
+      totalCount: data.total_count,
+      pendingContexts: data.statuses
+        .filter((status) => status.state === "pending")
+        .map((status) => status.context)
+        .filter((context): context is string => typeof context === "string" && context.length > 0),
+    };
   }
 
   /**

@@ -285,6 +285,22 @@ describe("evaluatePreflightChecks", () => {
       expect(check?.passed).toBe(false);
       expect(check?.detail).toContain("Legacy status");
     });
+
+    it("should expose pending legacy status contexts for queued squash", async () => {
+      const prs = createMockPrs({
+        getCombinedStatus: vi.fn().mockResolvedValue({
+          state: "pending",
+          totalCount: 2,
+          pendingContexts: ["CI / build", "CI / test"],
+        }),
+      });
+      const result = await evaluatePreflightChecks(buildParams({ prs }));
+
+      const check = findCheck(result, "CI checks passing");
+      expect(check?.passed).toBe(false);
+      expect(check?.detail).toContain("Still running: CI / build, CI / test");
+      expect(check?.pendingTargets).toEqual(["CI / build", "CI / test"]);
+    });
   });
 
   describe("advisory checks", () => {

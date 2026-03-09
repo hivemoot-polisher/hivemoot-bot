@@ -251,6 +251,19 @@ async function evaluateCI(
 
   // Legacy Status API
   if (statusResult.totalCount > 0 && statusResult.state !== "success") {
+    if (statusResult.state === "pending") {
+      const pendingTargets = statusResult.pendingContexts.length > 0
+        ? statusResult.pendingContexts
+        : ["legacy status checks"];
+      return {
+        name: "CI checks passing",
+        passed: false,
+        severity: "hard",
+        detail: `Still running: ${pendingTargets.join(", ")}`,
+        pendingTargets,
+      };
+    }
+
     return {
       name: "CI checks passing",
       passed: false,
